@@ -272,7 +272,6 @@ if (
 		&& fire.y <= (hero.y + 25)
 	) {
     monsterMove = false;
-    fireBall.speed = 125;
 		monstersCaught = 0;
     dead = true;
     fire.x = 0;
