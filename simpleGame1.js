@@ -1,7 +1,7 @@
 // Create the canvas
 var canvas = document.createElement("canvas");
 var ctx = canvas.getContext("2d");
-canvas.width = 512;
+canvas.width = 510;
 canvas.height = 480;
 document.body.appendChild(canvas);
 
@@ -100,6 +100,7 @@ var yEnergyDif = [];
 var xEnergyScale = [];
 var yEnergyScale = [];
 var dead = false;
+var poof = false;
 
 // Handle keyboard controls
 var keysDown = {};
@@ -148,31 +149,12 @@ var reset = function () {
   monster.y = 32 + (Math.random() * (canvas.height - 64));
   
   
-  if (monstersCaught > level1) {
-    
-  if (!(fireBall.x > 0 && fireBall.x < canvas.width && fireBall.y > 0 && fireBall.y < canvas.height)) {    
-    fireBall.x = monster.x;
-    fireBall.y = monster.y;
-    
-    xDif = monster.x - hero.x;
-    yDif = monster.y - hero.y;
-    
-    xScale = Math.cos(Math.atan(yDif/xDif));
-    yScale = Math.sin(Math.atan(yDif/xDif));
-    
-    if (xDif > 0) {
-      xScale *= -1;
-      yScale *= -1;
-    }
-  }
     
     if (monstersCaught > level2) {
       monsterMove = true;
       monsterMoveX = (2 * Math.random() - 1) * monster.speed;
       monsterMoveY = (2 * Math.random() - 1) * monster.speed;
     }
-    
-  }
 };
 
 // Update game objects
@@ -226,6 +208,8 @@ var update = function (modifier) {
   }
   
   else {
+    poof = false;
+    
     fireBall.x = monster.x;
     fireBall.y = monster.y;
       
@@ -301,10 +285,14 @@ if (
 		&& hero.y <= (fireBall.y + 25)
 		&& fireBall.y <= (hero.y + 25)
     && monstersCaught > level1
+    && !poof
 	) {
     monsterMove = false;
     fireBall.speed = 125;
 		monstersCaught = 0;
+    for (i = 0; i < energies.length; i++) {
+      energies[i].energyThrow = false;
+    }
     dead = true;
 		reset();
 	}
@@ -321,6 +309,18 @@ if (
       dead = false;
       energies[i].energyThrow = false;
       reset();
+    }
+    
+    if (
+      energies[i].energyThrow
+      && fireBall.x <= (energies[i].x + 32)
+      && energies[i].x <= (fireBall.x + 32)
+      && fireBall.y <= (energies[i].y + 32)
+      && energies[i].y <= (fireBall.y + 32)
+      && !poof
+    ) {
+      energies[i].energyThrow = false;
+      poof = true;
     }
   }
   
@@ -344,7 +344,7 @@ var render = function () {
 		ctx.drawImage(fireImage, fire.x, fire.y);
 	}
   
-  if (fireBallReady && monstersCaught > level1) {
+  if (fireBallReady && monstersCaught > level1 && !poof) {
     ctx.drawImage(fireBallImage, fireBall.x, fireBall.y);
   }
   
