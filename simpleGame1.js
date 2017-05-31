@@ -201,29 +201,30 @@ var update = function (modifier) {
     }
   
   
-  
-  if (fireBall.x > 0 && fireBall.x < canvas.width && fireBall.y > 0 && fireBall.y < canvas.height && monstersCaught > level1) {    
-    fireBall.x += xScale * fireBall.speed * modifier;
-    fireBall.y += yScale * fireBall.speed * modifier;
-  }
-  
-  else {
-    poof = false;
-    
-    fireBall.x = monster.x;
-    fireBall.y = monster.y;
-      
-    xDif = monster.x - hero.x;
-    yDif = monster.y - hero.y;
-
-    xScale = Math.cos(Math.atan(yDif/xDif));
-    yScale = Math.sin(Math.atan(yDif/xDif));
-    
-    if (xDif > 0) {
-      xScale *= -1;
-      yScale *= -1;
+  if (monstersCaught > level1) {
+    if (fireBall.x > 0 && fireBall.x < canvas.width && fireBall.y > 0 && fireBall.y < canvas.height) {    
+      fireBall.x += xScale * fireBall.speed * modifier;
+      fireBall.y += yScale * fireBall.speed * modifier;
     }
     
+    else {
+      poof = false;
+      
+      fireBall.x = monster.x;
+      fireBall.y = monster.y;
+        
+      xDif = monster.x - hero.x;
+      yDif = monster.y - hero.y;
+
+      xScale = Math.cos(Math.atan(yDif/xDif));
+      yScale = Math.sin(Math.atan(yDif/xDif));
+      
+      if (xDif > 0) {
+        xScale *= -1;
+        yScale *= -1;
+      }
+      
+    }
   }
 
   for (i = 0; i < energies.length; i++) {
@@ -287,7 +288,6 @@ if (
     && !poof
 	) {
     monsterMove = false;
-    fireBall.speed = 125;
 		monstersCaught = 0;
     for (i = 0; i < energies.length; i++) {
       energies[i].energyThrow = false;
